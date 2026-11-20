@@ -15,8 +15,38 @@ async function compare(page: Page) {
   await expect(page.getByRole("heading", { name: "Decision Twin." })).toBeVisible();
 }
 
+test("explores the landing sample by time, through chapters, and with reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const scene = page.getByRole("group", { name: "Sample forecast times" });
+  await scene.getByRole("button", { name: "Midday 11:00" }).click();
+  await expect(scene.getByRole("button", { name: "Midday 11:00" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".scene-picture")).toHaveAttribute("data-moment", "midday");
+  await expect(page.locator(".scene-reading")).toContainText("80 µg/m³");
+  await expect(page.locator(".scene-picture")).toHaveCSS("animation-name", "none");
+
+  const chapters = page.getByRole("navigation", { name: "On this page" });
+  await chapters.getByRole("link", { name: "Forecast" }).click();
+  const scrubber = page.getByRole("slider", { name: "Forecast hour" });
+  await scrubber.focus();
+  await scrubber.press("ArrowRight");
+  await expect(scrubber).toHaveAttribute("aria-valuetext", /07:30 IST.*142 micrograms/);
+
+  const twin = chapters.getByRole("link", { name: "Decision Twin" });
+  await twin.click();
+  await expect(twin).toHaveAttribute("aria-current", "location");
+  await page.getByRole("button", { name: "Proposed plan" }).click();
+  await expect(page.locator(".decision-value")).toHaveText("40 µg·h/m³");
+  await expect(page.locator(".decision-rows")).toContainText("11:00");
+  await expect(page.locator(".decision-rows")).toContainText("08:00");
+});
+
 test("compares the sample, shows reproducible evidence and recomputes a locked walk", async ({ page }) => {
   await sample(page);
+  const forecast = page.getByRole("slider", { name: "Forecast hour" });
+  await forecast.focus();
+  await forecast.press("End");
+  await expect(forecast).toHaveAttribute("aria-valuetext", /23:30 IST.*158 micrograms/);
   await page.getByText("View hourly values and timestamps").click();
   await expect(page.getByRole("table", { name: "Forecast hour starts in India Standard Time" })).toBeVisible();
   await page.getByText("View hourly values and timestamps").click();

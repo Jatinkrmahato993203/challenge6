@@ -97,7 +97,7 @@ export function Compare() {
         onClick={() => setOption({ result, id: candidate.id })}>Option {index + 1}</button>)}</div>}
     {chosen && metric ? <section className="comparison-highlight" aria-label="Comparison summary">
       <div className="impact-copy"><p className="ledger-label"><ArrowDownRight size={17} /> Modeled outdoor indicator</p>
-        <div className="impact-number">{format(metric.percentLower)}<span>% lower</span></div>
+        <div key={chosen.id} className="impact-number comparison-in">{format(metric.percentLower)}<span>% lower</span></div>
         <p>{format(metric.baselineValue)} → {format(metric.candidateValue)} µg·h/m³</p>
         <small>Concentration-time indicator. It does not estimate inhaled dose or disease risk.</small>
       </div>

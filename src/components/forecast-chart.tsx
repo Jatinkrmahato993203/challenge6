@@ -1,11 +1,13 @@
-import { useId } from "react";
+"use client";
+
+import { useId, useState } from "react";
 import { ChartNoAxesCombined, Clock3, Info } from "lucide-react";
 import type { ForecastSnapshot } from "@/lib/contracts";
 import { hourMs, localDate, localTime } from "@/lib/time";
 
 type Point = { x: number; y: number } | null;
 
-export function Trend({ values, marks = [] }: { values: (number | null)[]; marks?: number[] }) {
+function Trend({ values, mark }: { values: (number | null)[]; mark: number }) {
   const fillId = useId();
   const largest = Math.max(1, ...values.map(value => value ?? 0));
   const step = Math.max(25, Math.ceil(largest / 100) * 25);
@@ -38,16 +40,40 @@ export function Trend({ values, marks = [] }: { values: (number | null)[]; marks
           : <path d={line} fill="none" stroke="var(--chart-line)" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />}
       </g>;
     })}
-    {marks.map((index, order) => {
-      const point = points[Math.floor(index)];
-      if (!point) return null;
-      const x = xAt(index);
-      return <g key={index} className={order ? "chart-mark-proposed" : "chart-mark"}>
-        <path d={`M${x},${point.y}V99`} stroke="currentColor" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
-        <path d={`M${x - 2},${point.y}h4`} stroke="currentColor" strokeWidth="6" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-      </g>;
-    })}
+    {points[mark] && <g className="chart-mark">
+      <path d={`M${xAt(mark)},${points[mark].y}V99`} stroke="currentColor" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
+      <path d={`M${xAt(mark) - 2},${points[mark].y}h4`} stroke="currentColor" strokeWidth="6" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+    </g>}
   </svg>;
+}
+
+type ForecastHour = ForecastSnapshot["hours"][number];
+
+export function ForecastExplorer({ hours, defaultIndex = 0 }: { hours: ForecastHour[]; defaultIndex?: number }) {
+  const [index, setIndex] = useState(defaultIndex);
+  const selectedIndex = Math.max(0, Math.min(index, hours.length - 1));
+  const selected = hours[selectedIndex];
+  if (!selected) return null;
+  const time = localTime(selected.validAt);
+  const date = localDate(new Date(selected.validAt));
+  const currentDay = localDate(new Date(hours[hours.length - 1].validAt));
+  const concentration = selected.pm25UgM3;
+  const ticks = [0, 1, 2, 3, 4].map(part => Math.round(part * (hours.length - 1) / 4));
+
+  return <div className="forecast-explorer">
+    <div className="explorer-reading">
+      <time dateTime={selected.validAt}>{date !== currentDay && "Previous day, "}{time} IST</time>
+      <strong>{concentration ?? "Unavailable"}{concentration !== null && <small> µg/m³</small>}</strong>
+    </div>
+    <Trend values={hours.map(hour => hour.pm25UgM3)} mark={selectedIndex} />
+    <div className="chart-labels" aria-hidden="true">{[...new Set(ticks)].map(i => <span key={i}>{i === 0 && localDate(new Date(hours[i].validAt)) !== currentDay && "Prev. "}{localTime(hours[i].validAt)}</span>)}</div>
+    <label className="forecast-scrubber">
+      Forecast hour
+      <input type="range" min={0} max={hours.length - 1} step={1} value={selectedIndex}
+        aria-valuetext={`${date} at ${time} IST. ${concentration === null ? "Forecast unavailable" : `${concentration} micrograms per cubic metre`}`}
+        onChange={event => setIndex(event.currentTarget.valueAsNumber)} />
+    </label>
+  </div>;
 }
 
 export function ForecastChart({ snapshot, date, loading, error, incomplete, retry }: {
@@ -71,8 +97,7 @@ export function ForecastChart({ snapshot, date, loading, error, incomplete, retr
     {!loading && !error && snapshot && <>
       {available.length > 0 ? <>
         <div className="chart-summary"><strong>{Math.min(...available)}–{Math.max(...available)}</strong> <span>µg/m³ across available hours</span></div>
-        <Trend values={values} />
-        <div className="chart-labels" aria-hidden="true">{[0, 6, 12, 18, 24].map(index => <span key={index}>{index === 0 && "Prev. "}{localTime(hours[index].validAt)}</span>)}</div>
+        <ForecastExplorer key={`${snapshot.cityId}:${date}:${snapshot.source.dataKind}`} hours={hours} defaultIndex={values.findIndex(value => value !== null)} />
       </> : <p className="chart-empty">No usable hourly values for this date.</p>}
       <div className="forecast-source"><Clock3 size={15} /><span>{snapshot.source.dataKind === "demo"
         ? "Synthetic demonstration values are not real pollution readings."

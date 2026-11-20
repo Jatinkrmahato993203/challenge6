@@ -75,42 +75,10 @@ main:focus { outline: none; }
   input:not(:disabled):hover, select:not(:disabled):hover { border-color: var(--teal); }
 }
 
-.home { padding-top: 64px; }
-.hero { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); align-items: center; gap: 48px; padding-bottom: 64px; min-height: 580px; }
-.hero-copy h1 { font-size: clamp(48px, 5.7vw, 84px); }
-.hero-copy > p { max-width: 46ch; color: var(--muted); font-size: 16px; margin-top: 24px; }
-.hero-copy .button-row { margin-top: 32px; }
-.hero-copy .button { min-height: 48px; }
-.hero-visual { min-width: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
-.preview-chart { padding: 24px 32px; color: var(--on-teal); background: var(--teal-deep); --chart-line: #93c8b5; --chart-grid: #4c6a62; }
-.visual-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #c4d9cc; font-size: 14px; font-weight: 600; }
-.visual-top > span { display: inline-flex; gap: 8px; align-items: center; }
-.preview-demo { color: #ffe4b9; font-size: 12px; }
-.preview-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 24px; }
-.preview-heading h2 { font-size: clamp(22px, 2.5vw, 32px); }
-.preview-heading > span { font-size: 14px; color: #c4d9cc; }
 .trend { display: block; width: 100%; height: 136px; margin-top: 8px; }
-.preview-chart .trend { height: 184px; }
-.chart-mark { color: #e8f0dc; }
-.chart-mark-proposed { color: #ffcc91; }
+.chart-mark { color: var(--amber); }
 .chart-labels { display: flex; justify-content: space-between; margin-top: 4px; gap: 4px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.preview-chart .chart-labels { color: #c4d9cc; }
-.preview-rows { padding-inline: 24px; }
-.preview-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 16px 4px; font-size: 14px; }
-.preview-row + .preview-row { border-top: 1px solid var(--line); }
-.preview-row > svg, .preview-time { color: var(--teal); }
-.preview-time { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.preview-time > span { color: var(--muted); font-size: 12px; }
 .proposed-time { color: var(--amber); background: var(--amber-tint); padding: 2px 8px; border-radius: var(--radius-sm); font-weight: 700; }
-.how-section { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 48px; padding: 48px 0 96px; border-top: 1px solid var(--control-line); }
-.how-section h2 { font: 400 clamp(32px, 4vw, 48px)/1.1 "DM Serif Display", Georgia, serif; letter-spacing: -.025em; max-width: 14ch; }
-.how-intro .text-link { margin-top: 16px; font-size: 14px; }
-.method-list { list-style: none; counter-reset: steps; display: grid; margin: 0; padding: 0; }
-.method-list li { counter-increment: steps; display: grid; grid-template-columns: 32px 1fr; gap: 4px 12px; border-bottom: 1px solid var(--line); padding: 16px 0; }
-.method-list li:first-child { padding-top: 0; }
-.method-list li::before { content: counter(steps, decimal-leading-zero); grid-row: span 2; color: var(--amber); font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 600; }
-.method-list h3 { font-size: 20px; }
-.method-list p { color: var(--muted); max-width: 58ch; }
 
 .app-shell { padding-block: 48px 80px; }
 .app-intro { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
@@ -261,7 +229,6 @@ thead th { color: var(--muted); }
 
 @media (max-width: 980px) {
   .shell { width: calc(100% - 48px); }
-  .hero, .how-section { gap: 24px; }
   .activity-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .guidance-card { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
   .guidance-card .text-link { grid-column: 2; }
@@ -273,18 +240,7 @@ thead th { color: var(--muted); }
   .header-inner nav { grid-area: 2 / 1 / auto / span 2; justify-content: space-between; gap: 4px; border-top: 1px solid var(--line); }
   .header-inner nav a { font-size: 14px; }
   .brand { font-size: 24px; }
-  .home { padding-top: 40px; }
-  .hero, .how-section, .planner-grid, .comparison-highlight, .timelines, .support-grid, .community-grid, .reading-grid { grid-template-columns: minmax(0, 1fr); }
-  .hero { gap: 32px; min-height: 0; padding-bottom: 48px; }
-  .hero-copy h1 { font-size: clamp(44px, 10.5vw, 64px); }
-  .hero-copy > p { font-size: 16px; margin-top: 16px; }
-  .hero-copy .button-row { margin-top: 24px; }
-  .preview-chart { padding: 16px; }
-  .preview-chart .trend { height: 128px; }
-  .preview-rows { padding-inline: 12px; }
-  .preview-row { gap: 8px; padding: 12px 4px; }
-  .how-section { gap: 16px; padding: 32px 0 64px; }
-  .how-intro .text-link { margin-top: 8px; }
+  .planner-grid, .comparison-highlight, .timelines, .support-grid, .community-grid, .reading-grid { grid-template-columns: minmax(0, 1fr); }
   .app-shell { padding-block: 32px 56px; }
   .app-intro { margin-bottom: 24px; padding-bottom: 16px; }
   .split-intro { align-items: start; flex-direction: column; }
@@ -301,8 +257,6 @@ thead th { color: var(--muted); }
 }
 @media (max-width: 380px) {
   .header-inner nav a { font-size: 12px; }
-  .preview-row { font-size: 14px; }
-  .preview-time { gap: 4px; }
   .forecast-card .section-header { flex-wrap: wrap; }
   .timeline li { grid-template-columns: 40px 16px minmax(0, 1fr) auto; gap: 4px; }
   .timeline li .icon-box { width: 16px; }

@@ -1,41 +1,96 @@
 import Link from "next/link";
-import { ArrowRight, Footprints, LockKeyhole, MapPin, Play } from "lucide-react";
-import { Trend } from "@/components/forecast-chart";
-import { demoForecast } from "@/lib/demo";
+import { ArrowDown, ArrowRight, BookOpen, House, UsersRound } from "lucide-react";
+import { AtlasChapters, DayScene, DecisionPreview, type ComparisonFrame, type SceneMoment } from "@/components/atlas";
+import { ForecastExplorer } from "@/components/forecast-chart";
+import type { Activity } from "@/lib/contracts";
+import { demoDate, demoForecast, samplePlan } from "@/lib/demo";
+import { optimize } from "@/lib/optimizer";
+import { atLocal, localTime } from "@/lib/time";
 
-const steps = [
-  { title: "Read the forecast", text: "Check the hours you’re considering and see where the regional forecast comes from." },
-  { title: "Set your commitments", text: "Add appointments and errands. Lock the ones that must stay and specify when flexible activities can move." },
-  { title: "Compare the trade-offs", text: "Look at the original and proposed schedules side by side. Open the evidence before deciding which plan to keep." },
+const sceneTimes = [
+  { key: "morning", label: "Morning", time: "07:00" },
+  { key: "midday", label: "Midday", time: "11:00" },
+  { key: "evening", label: "Evening", time: "17:00" },
+] as const;
+
+const guides = [
+  { href: "/indoor", icon: House, title: "Inside your home", detail: "See how source control, filtration, and ventilation help indoors." },
+  { href: "/community", icon: UsersRound, title: "Plan a community event", detail: "Try comparing sample event times against a minimum attendance." },
+  { href: "/about", icon: BookOpen, title: "Sources and privacy", detail: "See where the forecasts come from and what happens to your routine." },
 ];
 
+function comparisonFrame(id: ComparisonFrame["id"], activities: Activity[], value: number | null): ComparisonFrame | null {
+  const walk = activities.find(activity => activity.id === "walk");
+  const school = activities.find(activity => activity.id === "school");
+  if (!walk || !school || value === null) return null;
+  return {
+    id, label: id === "original" ? "Original plan" : "Proposed plan",
+    walkTime: localTime(walk.startAt), schoolTime: localTime(school.startAt), value,
+  };
+}
+
 export default function Home() {
-  return <div className="shell home">
-    <section className="hero">
-      <div className="hero-copy">
-        <h1>Plan your day<br />around the air.</h1>
-        <p>Use the regional PM2.5 forecast to find a different time for flexible activities and keep fixed commitments in place.</p>
-        <div className="button-row">
-          <Link href="/planner" className="button button-primary">Plan my day <ArrowRight size={18} /></Link>
-          <Link href="/planner?mode=demo" className="button button-outline"><Play size={15} /> Try a sample day</Link>
+  const forecast = demoForecast("delhi");
+  const moments: SceneMoment[] = sceneTimes.map(moment => ({
+    ...moment,
+    pm25: forecast.hours.findLast(hour => hour.validAt <= atLocal(demoDate, moment.time))?.pm25UgM3 ?? null,
+  }));
+  const plan = samplePlan("delhi", demoDate);
+  const candidate = optimize(plan, forecast).candidates[0];
+  const metric = candidate?.metrics[0];
+  const original = metric && comparisonFrame("original", plan.activities, metric.baselineValue);
+  const proposed = metric && comparisonFrame("proposed", candidate.activities, metric.candidateValue);
+
+  return <div className="atlas-home">
+    <section className="atlas-hero" aria-labelledby="home-title">
+      <div className="shell atlas-spread">
+        <div className="atlas-copy">
+          <h1 id="home-title">Plan around<br /><span>the air.</span></h1>
+          <p>Use regional air-quality forecasts to move flexible activities and keep fixed plans in place.</p>
+          <div className="button-row">
+            <Link href="/planner" className="button atlas-primary">Plan my day <ArrowRight size={18} /></Link>
+            <Link href="/planner?mode=demo" className="button atlas-secondary">Try a sample day</Link>
+          </div>
+          <a href="#forecast" className="atlas-scroll"><ArrowDown size={18} /> Explore the sample forecast</a>
         </div>
-      </div>
-      <div className="hero-visual">
-        <div className="preview-chart">
-          <div className="visual-top"><span><MapPin size={15} /> New Delhi</span><span className="preview-demo">Synthetic demo</span></div>
-          <div className="preview-heading"><h2>PM2.5 through the day</h2><span>µg/m³</span></div>
-          <Trend values={demoForecast("delhi").hours.map(hour => hour.pm25UgM3)} marks={[7.5, 11.5]} />
-          <div className="chart-labels" aria-hidden="true"><span>Prev. 23:30</span><span>05:30</span><span>11:30</span><span>17:30</span><span>23:30</span></div>
-        </div>
-        <div className="preview-rows">
-          <div className="preview-row"><Footprints size={18} /><strong>Morning walk</strong><div className="preview-time"><time>07:00</time><ArrowRight size={14} /><time className="proposed-time">11:00</time></div></div>
-          <div className="preview-row"><LockKeyhole size={17} /><strong>School drop-off</strong><div className="preview-time"><span>Fixed</span><time>08:00</time></div></div>
-        </div>
+        <DayScene moments={moments} />
       </div>
     </section>
-    <section className="how-section">
-      <div className="how-intro"><h2>From a forecast to a plan.</h2><Link href="/about" className="text-link">See the sources and limitations</Link></div>
-      <ol className="method-list">{steps.map(({ title, text }) => <li key={title}><h3>{title}</h3><p>{text}</p></li>)}</ol>
+
+    <AtlasChapters />
+
+    <section id="forecast" className="shell atlas-chapter atlas-forecast" aria-labelledby="forecast-chapter-title">
+      <div className="chapter-heading">
+        <span className="chapter-label">01 / Forecast</span>
+        <h2 id="forecast-chapter-title">The air changes by the hour.</h2>
+        <p>Drag through a synthetic day in New Delhi. The planner uses regional forecasts, so each value describes conditions at the model’s scale.</p>
+      </div>
+      <div className="atlas-plot">
+        <div className="atlas-panel-heading"><h3>New Delhi forecast</h3><span className="pill pill-demo">Synthetic demo</span></div>
+        <ForecastExplorer hours={forecast.hours} defaultIndex={7} />
+      </div>
+    </section>
+
+    <section id="decision-twin" className="atlas-chapter atlas-twin" aria-labelledby="twin-chapter-title">
+      <div className="shell atlas-twin-grid">
+        <div className="chapter-heading">
+          <span className="chapter-label">02 / Decision Twin</span>
+          <h2 id="twin-chapter-title">Move the walk.<br />Keep school drop-off.</h2>
+          <p>Switch between the original and proposed plans. The sample compares outdoor concentration over the same walk duration, using a synthetic forecast.</p>
+          <Link href="/planner?mode=demo" className="text-link">Open the sample in the planner <ArrowRight size={17} /></Link>
+        </div>
+        {original && proposed && <DecisionPreview frames={[original, proposed]} />}
+      </div>
+    </section>
+
+    <section id="guide" className="shell atlas-chapter atlas-guides" aria-labelledby="guide-chapter-title">
+      <div className="chapter-heading">
+        <span className="chapter-label">03 / Guides</span>
+        <h2 id="guide-chapter-title">Plan indoors and together.</h2>
+      </div>
+      <ul className="atlas-guide-list">{guides.map(({ href, icon: Icon, title, detail }) =>
+        <li key={href}><Link href={href}><Icon size={21} /><span><strong>{title}</strong><small>{detail}</small></span><ArrowRight size={20} /></Link></li>
+      )}</ul>
     </section>
   </div>;
 }

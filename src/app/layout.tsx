@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer, Header } from "@/components/site";
 import "./globals.css";
+import "./atlas.css";
 
 export const metadata: Metadata = {
   title: { default: "SaansAI — Plan around the air", template: "%s | SaansAI" },

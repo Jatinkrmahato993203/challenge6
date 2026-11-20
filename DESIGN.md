@@ -74,7 +74,7 @@ components:
 
 ## Overview
 
-Adapt Taste MCP’s Instrument Panel to a household field ledger. Warm paper and ruled rows keep the planner familiar. The visual signature is a paired forecast and decision record. The landing chart marks the two comparison times, and the Decision Twin carries that distinction through the actual schedule.
+Adapt Taste MCP’s Instrument Panel to a household field ledger. Warm paper and ruled rows keep the planner familiar. The visual signature is an illustrated sample day that visitors can explore before opening the planner. Its original Delhi rooftop artwork changes tone as the visitor selects a forecast time. The landing page moves through forecast, comparison, and guide chapters, each with a direct link.
 
 ## Colors
 
@@ -82,7 +82,7 @@ Use teal for forecast data, modeled indicators, and primary controls. Use amber 
 
 ## Typography
 
-Use DM Serif Display for page titles and major editorial headings. Use Manrope for controls, prose, and tabular figures. Use sentence case for UI labels. Reserve small uppercase text for column labels in the ledger.
+Use DM Serif Display for page titles and major editorial headings. Set the entry poster in bold Manrope with a larger second line. Use Manrope for controls, prose, and tabular figures. Use sentence case for UI labels. Reserve small uppercase text for column labels in the ledger.
 
 ## Layout
 
@@ -98,7 +98,11 @@ Use 4px, 8px, and 12px corners. Keep repeated activity and event rows flat.
 
 ## Components
 
-Give every button, form field, and disclosure keyboard focus and a 44px target. At small sizes, use 16px text in editable fields. Use a visible loading label and content-shaped placeholders for data panels. Motion is limited to short transform and opacity transitions, with a reduced-motion fallback.
+Give every button, form field, and disclosure keyboard focus and a 44px target. At small sizes, use 16px text in editable fields. Use a visible loading label and content-shaped placeholders for data panels. The forecast scrubber is a native range control that announces the selected timestamp and value. The comparison preview visibly labels the selected schedule.
+
+## Motion
+
+Show actions and data on the first render. Use short transform and opacity transitions for scene changes, a small scroll-linked chapter rise, and a brief entrance for a changed comparison value. Respect reduced motion, including in-page navigation. Keep the illustrated time change separate from the forecast reading. The artwork is illustrative and its color does not encode a pollution threshold.
 
 ## Do's and Don'ts
 
