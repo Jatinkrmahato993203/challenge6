@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
+import { delhiPrint } from "./delhi-print";
 import Image from "next/image";
 import { CloudSun, Footprints, LockKeyhole, MapPin, Sun, Sunset } from "lucide-react";
 
@@ -14,21 +15,33 @@ export function AtlasChapters() {
   const [active, setActive] = useState<string>(chapterLinks[0].id);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      const chapter = entries.find(entry => entry.isIntersecting);
-      if (chapter) setActive(chapter.target.id);
-    }, { rootMargin: "-22% 0px -55% 0px" });
-    for (const { id } of chapterLinks) {
-      const chapter = document.getElementById(id);
-      if (chapter) observer.observe(chapter);
+    const chapters = chapterLinks.map(({ id }) => document.getElementById(id));
+    let frame = 0;
+    function locateChapter() {
+      frame = 0;
+      const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      const chapter = atEnd ? chapters.at(-1) : chapters.findLast(section =>
+        section && section.getBoundingClientRect().top <= window.innerHeight * .35
+      );
+      setActive(chapter?.id ?? chapterLinks[0].id);
     }
-    return () => observer.disconnect();
+    function scheduleUpdate() {
+      if (!frame) frame = requestAnimationFrame(locateChapter);
+    }
+    locateChapter();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
   }, []);
 
   return <nav className="atlas-chapters" aria-label="On this page">
-    <div className="shell atlas-chapter-links">
+    <div className="shell atlas-chapter-links" style={{ "--chapter": chapterLinks.findIndex(link => link.id === active) } as CSSProperties}>
       {chapterLinks.map(({ id, label }) => <a key={id} href={`#${id}`} aria-current={active === id ? "location" : undefined}>
-        <span className="chapter-dot" aria-hidden="true" />{label}
+        {label}
       </a>)}
     </div>
   </nav>;
@@ -46,11 +59,16 @@ export function DayScene({ moments }: { moments: SceneMoment[] }) {
   const [index, setIndex] = useState(0);
   const current = moments[index];
 
-  return <figure className="day-scene">
+  return <figure className="day-scene" style={{ "--moment": index } as CSSProperties}>
     <div className="scene-picture" data-moment={current.key}>
-      <Image className="scene-art" src="/delhi-air-atlas.webp" alt="" fill preload sizes="(max-width: 720px) 100vw, 55vw" />
-      <div className="scene-wash scene-wash-midday" aria-hidden="true" />
-      <div className="scene-wash scene-wash-evening" aria-hidden="true" />
+      <div className="scene-reel" aria-hidden="true">
+        {moments.map((moment, position) => <div className="scene-frame" key={moment.key} data-time={moment.key} data-selected={position === index}>
+          <Image className="scene-art" src="/delhi-air-atlas.webp" alt="" fill preload={position === 0}
+            sizes="(max-width: 720px) 100vw, 55vw" />
+          <div className={`scene-wash scene-wash-${moment.key}`} />
+          <pre className="scene-print">{delhiPrint}</pre>
+        </div>)}
+      </div>
       <span className="scene-place"><MapPin size={16} /> New Delhi</span>
       <div className="scene-reading" role="status">
         <span>{current.time} IST</span>

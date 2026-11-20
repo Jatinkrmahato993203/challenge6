@@ -66,6 +66,7 @@ h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-weight: 700; letter-spacing: -.025em; line-height: 1.2; }
 h1 { font: 400 var(--type-title)/1.05 "DM Serif Display", Georgia, serif; letter-spacing: -.03em; }
 strong, b { font-weight: 700; }
+:is(time, table, input[type="number"], input[type="time"], .impact-number) { font-variant-numeric: tabular-nums; }
 a { color: inherit; text-underline-offset: 4px; }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
@@ -99,7 +100,7 @@ main:focus { outline: none; }
 .button-primary { background: var(--teal); border-color: var(--teal); color: var(--on-action); }
 .button-outline { background: transparent; border-color: var(--control-line); color: var(--teal); }
 .button-outline[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-tint); }
-:is(.button, .icon-button, .lock-button, .mode-group button, .quiet-button, .text-link, .brand, nav a, summary):active:not(:disabled) { transform: translateY(1px); }
+:is(.button, .icon-button, .lock-button, .mode-group button, .quiet-button, .text-link, .brand, nav a, summary):active:not(:disabled) { transform: scale(.97); }
 .wide { width: 100%; }
 .button-row { display: flex; flex-wrap: wrap; gap: 12px; }
 .text-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--teal); font-weight: 700; }

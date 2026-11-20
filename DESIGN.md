@@ -94,7 +94,7 @@ Use one shared left edge, a 1240px maximum width, and a 4px spacing grid. Give l
 
 ## Elevation & Depth
 
-Use hairlines and tonal changes to separate sections. Use a solid deep-teal surface only where the landing forecast benefits from contrast.
+Use hairlines and tonal changes to separate sections. Keep the landing headline on the same paper as the chapters. Use deep teal behind the scene controls and reserve the filled primary action for opening the planner.
 
 ## Shapes
 
@@ -106,7 +106,7 @@ Give every button, form field, and disclosure keyboard focus and a 44px target. 
 
 ## Motion
 
-Show actions and data on the first render. The Delhi time switch is the landing page’s only animated scene. Use a 480 ms transform and opacity transition after a time selection, and 210 ms for new results on the Decision Twin screen. Respect reduced motion, including in-page navigation. The illustration’s color does not encode a pollution threshold.
+Show actions and data on the first render. The Delhi time switch is the landing page’s only animated scene. The Delhi time switch uses a horizontal filmstrip. Each selected frame develops from a character print of the same skyline over 480 ms. Keep the location and forecast reading stationary over the moving scene. A 210 ms underline follows the current chapter. Use 210 ms for new results on the Decision Twin screen. Respect reduced motion, including in-page navigation. The illustration’s color does not encode a pollution threshold.
 
 ## Do's and Don'ts
 

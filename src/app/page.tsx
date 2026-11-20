@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDown, ArrowRight, BookOpen, House, UsersRound } from "lucide-react";
+import { ArrowRight, BookOpen, House, UsersRound } from "lucide-react";
 import { AtlasChapters, DayScene, DecisionPreview, type ComparisonFrame, type SceneMoment } from "@/components/atlas";
 import { ForecastExplorer } from "@/components/forecast-chart";
 import type { Activity } from "@/lib/contracts";
@@ -46,12 +46,11 @@ export default function Home() {
       <div className="shell atlas-spread">
         <div className="atlas-copy">
           <h1 id="home-title">Plan around<br /><span>the air.</span></h1>
-          <p>Use regional air-quality forecasts to move flexible activities and keep fixed plans in place.</p>
+          <p>Compare two times for an outdoor activity. In the Delhi sample, you can move a morning walk and keep school drop-off at 08:00.</p>
           <div className="button-row">
-            <Link href="/planner" className="button atlas-primary">Plan my day <ArrowRight size={18} /></Link>
-            <Link href="/planner?mode=demo" className="button atlas-secondary">Try a sample day</Link>
+            <Link href="/planner" className="button button-primary">Plan my day <ArrowRight size={18} /></Link>
+            <Link href="/planner?mode=demo" className="button button-outline">Try a sample day</Link>
           </div>
-          <a href="#forecast" className="atlas-scroll"><ArrowDown size={18} /> Explore the sample forecast</a>
         </div>
         <DayScene moments={moments} />
       </div>
@@ -61,7 +60,6 @@ export default function Home() {
 
     <section id="forecast" className="shell atlas-chapter atlas-forecast" aria-labelledby="forecast-chapter-title">
       <div className="chapter-heading">
-        <span className="chapter-label">01 / Forecast</span>
         <h2 id="forecast-chapter-title">The air changes by the hour.</h2>
         <p>Drag through a synthetic day in New Delhi. The planner uses regional forecasts, so each value describes conditions at the model’s scale.</p>
       </div>
@@ -74,7 +72,6 @@ export default function Home() {
     <section id="decision-twin" className="atlas-chapter atlas-twin" aria-labelledby="twin-chapter-title">
       <div className="shell atlas-twin-grid">
         <div className="chapter-heading">
-          <span className="chapter-label">02 / Decision Twin</span>
           <h2 id="twin-chapter-title">Move the walk.<br />Keep school drop-off.</h2>
           <p>Switch between the original and proposed plans. The sample compares outdoor concentration over the same walk duration, using a synthetic forecast.</p>
           <Link href="/planner?mode=demo" className="text-link">Open the sample in the planner <ArrowRight size={17} /></Link>
@@ -85,7 +82,6 @@ export default function Home() {
 
     <section id="guide" className="shell atlas-chapter atlas-guides" aria-labelledby="guide-chapter-title">
       <div className="chapter-heading">
-        <span className="chapter-label">03 / Guides</span>
         <h2 id="guide-chapter-title">Plan indoors and together.</h2>
       </div>
       <ul className="atlas-guide-list">{guides.map(({ href, icon: Icon, title, detail }) =>
