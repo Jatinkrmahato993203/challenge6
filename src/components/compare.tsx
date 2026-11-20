@@ -24,7 +24,7 @@ function Timeline({ title, activities, changed, isProposed }: {
         <time dateTime={activity.startAt}>{localTime(activity.startAt)}</time><span className="icon-box"><Icon size={17} /></span>
         <div><strong>{activity.label}</strong><small>{activity.durationMinutes} min · {activity.environment}</small></div>
         {activity.fixed && <span className="fixed-note"><LockKeyhole size={13} /> Fixed</span>}
-        {isProposed && changed.includes(activity.id) && <span className="pill pill-neutral">Moved</span>}
+        {isProposed && changed.includes(activity.id) && <span className="moved-note">Moved</span>}
       </li>;
     })}</ol>
   </div>;
@@ -70,7 +70,7 @@ export function Compare() {
   }, [token]);
 
   if (!ready || !result) return <div className="shell app-shell">
-    <div className="app-intro"><p className="eyebrow"><Scale size={17} /> YOUR COMPARISON</p><h1>Decision Twin.</h1><p>Compare a routine to see its original schedule and any supported alternatives.</p></div>
+    <div className="app-intro"><h1>Decision Twin.</h1><p>Compare a routine to see its original schedule and any supported alternatives.</p></div>
     <Link href="/planner" className="button button-primary">Go to the planner <ArrowRight size={18} /></Link>
     <p className="form-notice" role="status">{notice}</p>
   </div>;
@@ -88,15 +88,15 @@ export function Compare() {
   return <div className="shell app-shell compare-shell">
     <Link className="text-link back-link" href="/planner"><ArrowLeft size={17} /> Back to planner</Link>
     <div className="app-intro split-intro">
-      <div><p className="eyebrow"><Scale size={17} /> YOUR COMPARISON</p><h1>Decision Twin.</h1>
-        <p><CalendarDays size={17} /> {friendlyDate(result.original.dateLocal)} · India Standard Time</p></div>
+      <div><h1>Decision Twin.</h1>
+        <p><CalendarDays size={17} /> {friendlyDate(result.original.dateLocal)} in India Standard Time</p></div>
       {result.source && <span className={`pill ${demo ? "pill-demo" : "pill-neutral"}`}>{demo ? <FlaskConical size={15} /> : <Wind size={15} />}{demo ? "Synthetic demo" : "Regional forecast"}</span>}
     </div>
     {result.candidates.length > 1 && <div className="option-picker" role="group" aria-label="Schedule alternatives">{result.candidates.map((candidate, index) =>
       <button key={candidate.id} type="button" className="button button-small button-outline" aria-pressed={candidate.id === chosen?.id}
         onClick={() => setOption({ result, id: candidate.id })}>Option {index + 1}</button>)}</div>}
-    {chosen && metric ? <section className="comparison-highlight">
-      <div className="impact-copy"><p className="eyebrow"><ArrowDownRight size={17} /> MODELED OUTDOOR INDICATOR</p>
+    {chosen && metric ? <section className="comparison-highlight" aria-label="Comparison summary">
+      <div className="impact-copy"><p className="ledger-label"><ArrowDownRight size={17} /> Modeled outdoor indicator</p>
         <div className="impact-number">{format(metric.percentLower)}<span>% lower</span></div>
         <p>{format(metric.baselineValue)} → {format(metric.candidateValue)} µg·h/m³</p>
         <small>Concentration-time indicator. It does not estimate inhaled dose or disease risk.</small>
@@ -104,7 +104,7 @@ export function Compare() {
       <div className="changes"><h2>What changes</h2>{moved.map(activity => {
         const original = result.original.activities.find(item => item.id === activity.id)!;
         return <div className="change-row" key={activity.id}>
-          <div><strong>{activity.label}</strong><span>{localTime(original.startAt)} <ArrowRight size={14} /> {localTime(activity.startAt)} IST</span></div>
+          <div><strong>{activity.label}</strong><span className="schedule-shift"><time dateTime={original.startAt}>{localTime(original.startAt)}</time><ArrowRight size={14} /><time className="proposed-time" dateTime={activity.startAt}>{localTime(activity.startAt)}</time> IST</span></div>
           <button className="button button-small button-outline" onClick={() => lock(activity.id)} disabled={pending}><LockKeyhole size={14} /> Lock {activity.label}</button>
         </div>;
       })}<p className="subtle">Lock an activity to keep its original time and compare again.</p></div>

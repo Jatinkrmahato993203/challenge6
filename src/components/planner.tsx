@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, FlaskConical, ListChecks, MapPin, Plus, ShieldCheck, Wind } from "lucide-react";
+import { ArrowRight, FlaskConical, ListChecks, MapPin, Plus, ShieldCheck, Wind } from "lucide-react";
 import { cities, dateSchema, type Activity, type CityId, type ForecastSnapshot, type HouseholdPlan } from "@/lib/contracts";
 import { atLocal, friendlyDate, localTime } from "@/lib/time";
 import { ActivityEditor } from "./activity-editor";
@@ -53,10 +53,12 @@ export function Planner() {
 
   if (!ready) return <p className="shell app-intro" role="status">Opening the planner…</p>;
   return <div className="shell app-shell">
-    <div className="app-intro">
-      <div className="eyebrow"><CalendarDays size={16} /> YOUR ROUTINE</div>
+    <div className="app-intro split-intro">
+      <div>
       <h1>Plan your day.</h1>
       <p>See the forecast, add your commitments and choose what can move.</p>
+      </div>
+      <p className="intro-location"><MapPin size={16} /> {cities[plan.cityId].name}</p>
     </div>
     <div className="planner-grid">
       <aside className="planner-side" aria-label="Forecast and settings">
@@ -86,7 +88,7 @@ export function Planner() {
       <form className="planner-main" onSubmit={event => { event.preventDefault(); void compare(); }}>
         <fieldset className="card routine-card" disabled={pending}>
           <legend className="sr-only">Edit your routine</legend>
-          <div className="section-header"><div className="heading-with-icon"><span className="icon-box"><ListChecks size={22} /></span><div><h2>Your activities</h2><p>{friendlyDate(plan.dateLocal)}</p></div></div><span className="pill pill-neutral">{plan.activities.length} / 8</span></div>
+          <div className="section-header"><div className="heading-with-icon"><span className="icon-box"><ListChecks size={22} /></span><div><h2>Your activities</h2><p>{friendlyDate(plan.dateLocal)}</p></div></div><span className="count-label">{plan.activities.length} of 8 activities</span></div>
           <div className="activity-list">
             {plan.activities.map((activity, position) => <ActivityEditor key={activity.id} activity={activity} position={position} date={plan.dateLocal}
               change={editActivity} canRemove={plan.activities.length > 1} remove={() => updatePlan({ ...plan, activities: plan.activities.filter(item => item.id !== activity.id) })} />)}
