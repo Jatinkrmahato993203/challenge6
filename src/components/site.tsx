@@ -13,7 +13,7 @@ const pages = [
 
 export function Brand() {
   return <Link href="/" className="brand" aria-label="SaansAI home">
-    <span className="brand-mark"><Wind size={20} strokeWidth={2.3} /></span><span>Saans<span className="brand-ai">AI</span></span>
+    <span className="brand-mark"><Wind size={20} /></span><span>Saans<span className="brand-ai">AI</span></span>
   </Link>;
 }
 

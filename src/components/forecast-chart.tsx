@@ -93,12 +93,12 @@ export function ForecastChart({ snapshot, date, loading, error, incomplete, retr
       {snapshot && <span className={`pill ${snapshot.source.dataKind === "demo" ? "pill-demo" : "pill-neutral"}`}>{snapshot.source.dataKind === "demo" ? "Synthetic demo" : "Regional forecast"}</span>}
     </div>
     {loading && <div className="loading-panel" role="status"><span>Loading forecast…</span><div className="skeleton-chart" aria-hidden="true" /></div>}
-    {!loading && error && <div className="chart-empty" role="status"><Info size={22} /><strong>{incomplete ? "Incomplete forecast data" : "Forecast unavailable"}</strong><p>{error}</p><button className="button button-small button-outline" onClick={retry}>Retry forecast</button></div>}
+    {!loading && error && <div className="chart-empty status-error"><Info size={22} /><div role="status"><strong>{incomplete ? "Incomplete forecast data" : "Forecast unavailable"}</strong><p>{error}</p></div><button className="button button-small button-outline" onClick={retry}>Retry forecast</button></div>}
     {!loading && !error && snapshot && <>
       {available.length > 0 ? <>
         <div className="chart-summary"><strong>{Math.min(...available)}–{Math.max(...available)}</strong> <span>µg/m³ across available hours</span></div>
         <ForecastExplorer key={`${snapshot.cityId}:${date}:${snapshot.source.dataKind}`} hours={hours} defaultIndex={values.findIndex(value => value !== null)} />
-      </> : <p className="chart-empty">No usable hourly values for this date.</p>}
+      </> : <div className="chart-empty"><p role="status">No hourly forecast values for this date. Choose another date or retry.</p><button className="button button-small button-outline" onClick={retry}>Retry forecast</button></div>}
       <div className="forecast-source"><Clock3 size={15} /><span>{snapshot.source.dataKind === "demo"
         ? "Synthetic demonstration values are not real pollution readings."
         : <>Retrieved {localDate(new Date(snapshot.source.retrievedAt))} at {localTime(snapshot.source.retrievedAt)} IST · Issue time {snapshot.source.issuedAt ? localTime(snapshot.source.issuedAt) + " IST" : "not supplied"} · Approx. 45 km model grid</>}</span></div>

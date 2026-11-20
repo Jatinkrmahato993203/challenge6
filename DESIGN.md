@@ -19,7 +19,7 @@ typography:
     fontFamily: DM Serif Display
     fontSize: 72px
     fontWeight: 400
-    lineHeight: 1.04
+    lineHeight: 1.05
     letterSpacing: -0.03em
   headline-md:
     fontFamily: Manrope Variable
@@ -74,19 +74,23 @@ components:
 
 ## Overview
 
-Adapt Taste MCP’s Instrument Panel to a household field ledger. Warm paper and ruled rows keep the planner familiar. The visual signature is an illustrated sample day that visitors can explore before opening the planner. Its original Delhi rooftop artwork changes tone as the visitor selects a forecast time. The landing page moves through forecast, comparison, and guide chapters, each with a direct link.
+**Brief:** Help households planning around air quality compare a flexible activity at two times and see what stays fixed.
+
+Adapt Taste MCP’s Instrument Panel to a household field ledger. Warm paper and ruled rows keep the planner familiar. The signature move is the **Delhi time switch**. Visitors can select a forecast time to change the reading and tone of the original rooftop illustration. The landing page moves through forecast, comparison, and guide chapters, each with a direct link.
 
 ## Colors
 
 Use teal for forecast data, modeled indicators, and primary controls. Use amber for a proposed schedule change or an explicitly labeled synthetic or caution state. Keep fixed activities neutral and label every status in text.
 
+Dark mode follows the system. Use a deep green-black canvas (`#151d1a`), raised surfaces (`#202b26`), off-white text (`#e6e9e4`), and muted teal (`#afcfc2`). Pair filled controls with their own text color. Reserve amber for decisions and warnings in both modes.
+
 ## Typography
 
-Use DM Serif Display for page titles and major editorial headings. Set the entry poster in bold Manrope with a larger second line. Use Manrope for controls, prose, and tabular figures. Use sentence case for UI labels. Reserve small uppercase text for column labels in the ledger.
+Use DM Serif Display for page titles and major editorial headings. Set the entry poster in bold Manrope with a larger second line. Use Manrope for controls, prose, and tabular figures. The shared type scale is 12, 14, 16, 20, 24, and 32 px, with fluid display titles. Use regular, semibold, and bold only. Use sentence case for UI labels.
 
 ## Layout
 
-Use one shared left edge, a 1240px maximum width, and a 4px spacing grid. Use seams and rows to group data. Put the schedule comparison first on Decision Twin and keep the evidence one action away. At narrow widths, stack the content in reading order and allow wide tables to scroll independently.
+Use one shared left edge, a 1240px maximum width, and a 4px spacing grid. Give landing chapters 96 px of vertical padding on desktop and 64 px on mobile. Keep app forms and tables compact. Use seams and rows to group data. Put the schedule comparison first on Decision Twin and keep the evidence one action away. At narrow widths, stack the content in reading order and allow wide tables to scroll independently.
 
 ## Elevation & Depth
 
@@ -98,11 +102,11 @@ Use 4px, 8px, and 12px corners. Keep repeated activity and event rows flat.
 
 ## Components
 
-Give every button, form field, and disclosure keyboard focus and a 44px target. At small sizes, use 16px text in editable fields. Use a visible loading label and content-shaped placeholders for data panels. The forecast scrubber is a native range control that announces the selected timestamp and value. The comparison preview visibly labels the selected schedule.
+Give every button, form field, and disclosure keyboard focus and a 44px target. Use a 2px focus ring with a 2px offset. At small sizes, use 16px text in editable fields. Use a visible loading label and content-shaped placeholders for data panels. Pair unavailable states with a clear next action. The forecast scrubber is a native range control that announces the selected timestamp and value. The comparison preview visibly labels the selected schedule.
 
 ## Motion
 
-Show actions and data on the first render. Use short transform and opacity transitions for scene changes, a small scroll-linked chapter rise, and a brief entrance for a changed comparison value. Respect reduced motion, including in-page navigation. Keep the illustrated time change separate from the forecast reading. The artwork is illustrative and its color does not encode a pollution threshold.
+Show actions and data on the first render. The Delhi time switch is the landing page’s only animated scene. Use a 480 ms transform and opacity transition after a time selection, and 210 ms for new results on the Decision Twin screen. Respect reduced motion, including in-page navigation. The illustration’s color does not encode a pollution threshold.
 
 ## Do's and Don'ts
 

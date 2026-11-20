@@ -95,6 +95,7 @@ export function Compare() {
     {result.candidates.length > 1 && <div className="option-picker" role="group" aria-label="Schedule alternatives">{result.candidates.map((candidate, index) =>
       <button key={candidate.id} type="button" className="button button-small button-outline" aria-pressed={candidate.id === chosen?.id}
         onClick={() => setOption({ result, id: candidate.id })}>Option {index + 1}</button>)}</div>}
+    {pending && <p className="form-notice" role="status">Recomputing options…</p>}
     {chosen && metric ? <section className="comparison-highlight" aria-label="Comparison summary">
       <div className="impact-copy"><p className="ledger-label"><ArrowDownRight size={17} /> Modeled outdoor indicator</p>
         <div key={chosen.id} className="impact-number comparison-in">{format(metric.percentLower)}<span>% lower</span></div>
@@ -127,6 +128,6 @@ export function Compare() {
       {chosen && <button className="button button-primary" disabled={pending} onClick={() => accept(chosen.activities)}><Check size={18} /> Accept this alternative</button>}
       <button className="button button-outline" disabled={pending} onClick={reject}>Keep original routine</button>
     </div>
-    <p className="form-notice" role="status">{pending ? "Recomputing…" : notice}</p>
+    <p className="form-notice" role="status">{notice}</p>
   </div>;
 }

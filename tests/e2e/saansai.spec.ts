@@ -23,7 +23,7 @@ test("explores the landing sample by time, through chapters, and with reduced mo
   await expect(scene.getByRole("button", { name: "Midday 11:00" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".scene-picture")).toHaveAttribute("data-moment", "midday");
   await expect(page.locator(".scene-reading")).toContainText("80 µg/m³");
-  await expect(page.locator(".scene-picture")).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".scene-wash-midday")).toHaveCSS("transition-duration", "0s");
 
   const chapters = page.getByRole("navigation", { name: "On this page" });
   await chapters.getByRole("link", { name: "Forecast" }).click();
@@ -122,6 +122,35 @@ test("publishes only aggregate synthetic event counts and applies the attendance
   await page.getByRole("button", { name: "Compare event times" }).click();
   await expect(page.getByText("No event time meets the attendance threshold.")).toBeVisible();
   await expect(page.getByText("Below minimum")).toHaveCount(4);
+});
+
+test("shows a recoverable event error and retries the same attendance threshold", async ({ page }) => {
+  let calls = 0;
+  await page.route("**/api/community/simulate", async route => {
+    expect(route.request().postDataJSON()).toEqual({ minimumAttendees: 10 });
+    if (++calls === 1) {
+      await route.fulfill({ status: 503, json: { error: { code: "TEMPORARILY_UNAVAILABLE", message: "Comparison temporarily unavailable." } } });
+    } else {
+      await route.continue();
+    }
+  });
+  await page.goto("/community");
+  await expect(page.getByText("Event times unavailable", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Retry comparison" }).click();
+  await expect(page.getByText("Lowest modeled value among eligible slots at")).toBeVisible();
+  expect(calls).toBe(2);
+});
+
+test("honors the system dark preference and keeps the active forecast controls readable", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
+  const evening = page.getByRole("button", { name: "Evening 17:00" });
+  await evening.click();
+  await expect(evening).toHaveAttribute("aria-pressed", "true");
+  const audit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(audit.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
 });
 
 test("has no automated WCAG A/AA violations on the landing, planner and result", async ({ page }) => {
